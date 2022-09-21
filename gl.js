@@ -135,12 +135,20 @@ class Renderer {
           canvas.height = displayHeight;
 
           context.viewport(0, 0, displayWidth, displayHeight);
-          this.setUniform("u_aspect", [displayWidth / displayHeight]);
         }
        
         return needResize;
-      }
-      
+    }
+    
+    getAspectRatio = () => {
+        const context = this.getRenderingContext();
+        const canvas = context.canvas;
+
+        const displayWidth  = canvas.clientWidth;
+        const displayHeight = canvas.clientHeight;
+       
+        return displayWidth / displayHeight;
+    }
 
     render = () => {
         const context = this.getRenderingContext();
@@ -290,9 +298,36 @@ struct Hit {
     float d;
 };
 
+float getDeter(Ray ray) {
+    vec3 centerToStart = ray.start - u_sphere.center;
+    float deter = dot(ray.dir, centerToStart);
+    deter *= deter;
+    deter -= (dot(centerToStart, centerToStart) - u_sphere.radius * u_sphere.radius);
+
+    return(deter);
+}
 
 void main() {
-    outColor = vec4(0, 0, 0, 1);
+    vec2 screenLoc = vec2(uv.x * u_aspect, uv.y);
+
+    Ray ray;
+    ray.start = vec3(screenLoc, 0);
+    ray.dir = vec3(0, 0, -1);
+
+    float deter = getDeter(ray);
+    float d = -dot(ray.dir, ray.start - u_sphere.center) - sqrt(deter);
+
+    if (deter >= 0.0 && d >= 0.0) {
+        Hit hit;
+        hit.d = d;
+        hit.point = ray.start + d * ray.dir;
+        hit.normal = normalize(hit.point - u_sphere.center);
+
+        outColor = vec4(-hit.point.z, -hit.point.z, -hit.point.z, 1);
+    }
+    else {
+        outColor = vec4(0, 0, 0, 1);
+    }
 }
 `);
 renderer.compile();
@@ -316,11 +351,10 @@ renderer.setRenderOption({
 
 
 const sphere = new Sphere();
-let radius = 0.5;
 
 vec3.set(sphere.getCenter(), 0, 0, -1);
 vec3.set(sphere.getColor(), 0.5, 0.5, 0.5);
-sphere.setRadius(radius);
+sphere.setRadius(0.5);
 
 
 const light = new Light();
@@ -335,8 +369,10 @@ const updateFunction = (deltatime) => {
 
     renderer.setUniform("u_light.center", [light.getCenter()[0], light.getCenter()[1], light.getCenter()[2]]);
     renderer.setUniform("u_light.color", [light.getColor()[0], light.getColor()[1], light.getColor()[2]]);
+    renderer.setUniform("u_aspect", [renderer.getAspectRatio()]);
 }
 renderer.setUpdateFunction(updateFunction);
 
 renderer.start();
+
 
