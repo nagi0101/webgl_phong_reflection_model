@@ -242,3 +242,101 @@ class Light {
     }
 }
 
+
+const renderer = new Renderer();
+renderer.init();
+renderer.setVertexShader(`#version 300 es
+
+in vec4 a_position;
+
+out vec2 uv;
+
+void main() {
+    gl_Position = a_position;
+    uv = a_position.xy;
+}
+`);
+renderer.setFragmentShader(`#version 300 es
+
+precision highp float;
+
+out vec4 outColor;
+
+in vec2 uv;
+
+uniform float u_aspect;
+
+struct Sphere {
+    vec3 center;
+    vec3 color;
+    float radius;
+};
+uniform Sphere u_sphere;
+
+struct Light {
+    vec3 center;
+    vec3 color;
+};
+uniform Light u_light;
+
+struct Ray {
+    vec3 start;
+    vec3 dir;
+};
+
+struct Hit {
+    vec3 point;
+    vec3 normal;
+    float d;
+};
+
+
+void main() {
+    outColor = vec4(0, 0, 0, 1);
+}
+`);
+renderer.compile();
+
+renderer.setAttribute(
+    "a_position",
+    [
+        -1, 1,
+        1, 1,
+        1, -1,
+        -1, -1,
+    ],
+    {
+        size: 2,
+    }
+);
+renderer.setRenderOption({
+    offset: 0,
+    count: 4,
+})
+
+
+const sphere = new Sphere();
+let radius = 0.5;
+
+vec3.set(sphere.getCenter(), 0, 0, -1);
+vec3.set(sphere.getColor(), 0.5, 0.5, 0.5);
+sphere.setRadius(radius);
+
+
+const light = new Light();
+
+vec3.set(light.getCenter(), 0, 1, -1);
+vec3.set(light.getColor(), 1.0, 1.0, 1.0);
+
+const updateFunction = (deltatime) => {
+    renderer.setUniform("u_sphere.center", [sphere.getCenter()[0], sphere.getCenter()[1], sphere.getCenter()[2]]);
+    renderer.setUniform("u_sphere.color", [sphere.getColor()[0], sphere.getColor()[1], sphere.getColor()[2]]);
+    renderer.setUniform("u_sphere.radius", [sphere.getRadius()]);
+
+    renderer.setUniform("u_light.center", [light.getCenter()[0], light.getCenter()[1], light.getCenter()[2]]);
+    renderer.setUniform("u_light.color", [light.getColor()[0], light.getColor()[1], light.getColor()[2]]);
+}
+renderer.setUpdateFunction(updateFunction);
+
+renderer.start();
+
