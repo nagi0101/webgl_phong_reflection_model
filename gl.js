@@ -184,3 +184,61 @@ class Renderer {
         this.pause = true;
     }
 }
+
+const {vec3} = glMatrix;
+
+class Sphere {
+    constructor(center = vec3.create(), radius = 0.5, color = vec3.create()){
+        this.center = center;
+        this.radius = radius;
+        this.color = color;
+    }
+
+    setCenter = (center) => {
+        this.center = center;
+    }
+
+    getCenter = () => {
+        return this.center;
+    } 
+
+    setRadius = (radius) => {
+        this.radius = radius;
+    }
+    
+    getRadius = () => {
+        return this.radius;
+    }
+
+    setColor = (color) => {
+        this.color = color;
+    }
+    
+    getColor = () => {
+        return this.color;
+    }
+}
+
+class Light {
+    constructor(center = vec3.create(), color = vec3.create()){
+        this.center = center;
+        this.color = color;
+    }
+
+    setCenter = (center) => {
+        this.center = center;
+    }
+
+    getCenter = () => {
+        return this.center;
+    } 
+
+    setColor = (color) => {
+        this.color = color;
+    }
+    
+    getColor = () => {
+        return this.color;
+    }
+}
+
