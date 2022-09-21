@@ -376,3 +376,42 @@ renderer.setUpdateFunction(updateFunction);
 renderer.start();
 
 
+
+
+createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
+createSlider("sphere.y", -2.0, 2.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
+createSlider("sphere.z", -2.0, 2.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
+createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
+
+
+function createSlider(name, min, max, initialValue, callback){
+    const uiContainer = document.querySelector("#ui");
+
+    const sliderContainer = document.createElement('div');
+    sliderContainer.style.display = "flex";
+    
+    const nametag = document.createElement('p');
+    nametag.innerText = name;
+    
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = min;
+    slider.max = max;
+    slider.value = initialValue;
+    slider.step = 0.01;
+    slider.oninput = (e) => {
+        const value = e.target.value
+        const valuetag = e.target.nextElementSibling;
+        valuetag.innerText = value;
+        callback(value);
+    }
+
+    const value = document.createElement('p');
+    value.innerText = slider.value;
+
+
+    sliderContainer.appendChild(nametag);
+    sliderContainer.appendChild(slider);
+    sliderContainer.appendChild(value);
+    uiContainer.appendChild(sliderContainer);
+}
