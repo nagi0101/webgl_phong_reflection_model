@@ -12,7 +12,7 @@ html, body{
 }
 
 #ui {
-    width: 20%;
+    min-width: 20%;
     position: absolute;
     top: 0;
     right: 0;

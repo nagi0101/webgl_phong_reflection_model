@@ -136,6 +136,7 @@ class Renderer {
           canvas.height = displayHeight;
 
           context.viewport(0, 0, displayWidth, displayHeight);
+          this.emitEvent('resize');
         }
        
         return needResize;
@@ -393,17 +394,12 @@ renderer.start();
 
 
 
-createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
-createSlider("sphere.y", -2.0, 2.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
-createSlider("sphere.z", -2.0, 2.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
-createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
-
-
 function createSlider(name, min, max, initialValue, callback){
     const uiContainer = document.querySelector("#ui");
 
     const sliderContainer = document.createElement('div');
     sliderContainer.style.display = "flex";
+    sliderContainer.id = name;
     
     const nametag = document.createElement('p');
     nametag.innerText = name;
@@ -429,4 +425,20 @@ function createSlider(name, min, max, initialValue, callback){
     sliderContainer.appendChild(slider);
     sliderContainer.appendChild(value);
     uiContainer.appendChild(sliderContainer);
+
+    return sliderContainer;
 }
+
+const xSlider = createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
+createSlider("sphere.y", -1.0, 1.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
+createSlider("sphere.z", -2.0, 2.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
+createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
+
+
+renderer.listenEvent("resize", ()=>{
+    const inputElement = xSlider.querySelector("input");
+    const aspect = renderer.getAspectRatio();
+    inputElement.min = -aspect;
+    inputElement.max = aspect;
+});
+
