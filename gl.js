@@ -9,6 +9,7 @@ class Renderer {
         this.pause = false;
         this.prevTime = 0;
         this.updateFunction = () => {};
+        this.events = {};
     }
 
     init(){
@@ -191,6 +192,20 @@ class Renderer {
     stop(){
         this.pause = true;
     }
+
+    listenEvent = (name, callback) => {
+        this.events[name] = callback;
+    }
+
+    clearEvent = (name) => {
+        delete this.events[name];
+    }
+
+    emitEvent = (name) => {
+        const handler = this.events[name];
+        handler && handler();
+    }
+
 }
 
 const {vec3} = glMatrix;
