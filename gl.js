@@ -212,10 +212,14 @@ class Renderer {
 const {vec3} = glMatrix;
 
 class Sphere {
-    constructor(center = vec3.create(), radius = 0.5, color = vec3.create()){
+    constructor(center = vec3.create(), radius = 0.5, color = vec3.create(), ambient = 0.0, diffuse = 0.0, specular = 0.0, specularAlpha = 100){
         this.center = center;
         this.radius = radius;
         this.color = color;
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.specularAlpha = specularAlpha;
     }
 
     setCenter = (center) => {
@@ -240,6 +244,38 @@ class Sphere {
     
     getColor = () => {
         return this.color;
+    }
+
+    setAmbient = (ambient) => {
+        this.ambient = ambient;
+    }
+    
+    getAmbient = () => {
+        return this.ambient;
+    }
+
+    setDiffuse = (diffuse) => {
+        this.diffuse = diffuse;
+    }
+    
+    getDiffuse = () => {
+        return this.diffuse;
+    }
+
+    setSpecular = (specular) => {
+        this.specular = specular;
+    }
+    
+    getSpecular = () => {
+        return this.specular;
+    }
+
+    setSpecularAlpha = (specularAlpha) => {
+        this.specularAlpha = specularAlpha;
+    }
+    
+    getSpecularAlpha = () => {
+        return this.specularAlpha;
     }
 }
 
@@ -294,6 +330,10 @@ struct Sphere {
     vec3 center;
     vec3 color;
     float radius;
+    float ambient;
+    float diffuse;
+    float specular;
+    float specularAlpha;
 };
 uniform Sphere u_sphere;
 
@@ -339,7 +379,19 @@ void main() {
         hit.point = ray.start + d * ray.dir;
         hit.normal = normalize(hit.point - u_sphere.center);
 
-        outColor = vec4(-hit.point.z, -hit.point.z, -hit.point.z, 1);
+        
+        vec3 ambient = u_sphere.ambient * u_light.color;
+
+        vec3 dirToLight = normalize(u_light.center - hit.point);
+        vec3 diffuse = max(dot(dirToLight, hit.normal), 0.0) * u_sphere.diffuse * u_light.color;
+
+        vec3 specReflectDir = 2.0 * dot(hit.normal, dirToLight) * hit.normal - dirToLight;
+        vec3 specular = pow(max(dot(-ray.dir, specReflectDir), 0.0), u_sphere.specularAlpha) * u_sphere.specular * u_light.color;
+        
+        
+        vec3 pixelColor = (ambient + diffuse + specular) * u_sphere.color;
+
+        outColor = vec4(pixelColor, 1);
     }
     else {
         outColor = vec4(0, 0, 0, 1);
@@ -382,6 +434,10 @@ const updateFunction = (deltatime) => {
     renderer.setUniform("u_sphere.center", [sphere.getCenter()[0], sphere.getCenter()[1], sphere.getCenter()[2]]);
     renderer.setUniform("u_sphere.color", [sphere.getColor()[0], sphere.getColor()[1], sphere.getColor()[2]]);
     renderer.setUniform("u_sphere.radius", [sphere.getRadius()]);
+    renderer.setUniform("u_sphere.ambient", [sphere.getAmbient()]);
+    renderer.setUniform("u_sphere.diffuse", [sphere.getDiffuse()]);
+    renderer.setUniform("u_sphere.specular", [sphere.getSpecular()]);
+    renderer.setUniform("u_sphere.specularAlpha", [sphere.getSpecularAlpha()]);
 
     renderer.setUniform("u_light.center", [light.getCenter()[0], light.getCenter()[1], light.getCenter()[2]]);
     renderer.setUniform("u_light.color", [light.getColor()[0], light.getColor()[1], light.getColor()[2]]);
@@ -413,7 +469,7 @@ function createSlider(name, min, max, initialValue, callback){
     slider.oninput = (e) => {
         const value = e.target.value
         const valuetag = e.target.nextElementSibling;
-        valuetag.innerText = value;
+        valuetag.innerText = value.toString().substring(0, 4);
         callback(value);
     }
 
@@ -432,7 +488,26 @@ function createSlider(name, min, max, initialValue, callback){
 const xSlider = createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
 createSlider("sphere.y", -1.0, 1.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
 createSlider("sphere.z", -2.0, 2.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
+
+createSlider("sphere.r", 0.0, 1.0, sphere.getColor()[0], (value)=>{sphere.getColor()[0] = value;});
+createSlider("sphere.g", 0.0, 1.0, sphere.getColor()[1], (value)=>{sphere.getColor()[1] = value;});
+createSlider("sphere.b", 0.0, 1.0, sphere.getColor()[2], (value)=>{sphere.getColor()[2] = value;});
+
 createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
+createSlider("sphere.ambient", 0.0, 1.0, sphere.getAmbient(), (value)=>{sphere.setAmbient(value);});
+createSlider("sphere.diffuse", 0.0, 1.0, sphere.getDiffuse(), (value)=>{sphere.setDiffuse(value);});
+createSlider("sphere.specular", 0.0, 2.0, sphere.getSpecular(), (value)=>{sphere.setSpecular(value);});
+createSlider("sphere.specularAlpha", 0.0, 400.0, sphere.getSpecularAlpha(), (value)=>{sphere.setSpecularAlpha(value);});
+
+
+createSlider("light.x", -2.0, 2.0, light.getCenter()[0], (value)=>{light.getCenter()[0] = value;});
+createSlider("light.y", -1.0, 1.0, light.getCenter()[1], (value)=>{light.getCenter()[1] = value;});
+createSlider("light.z", -2.0, 2.0, light.getCenter()[2], (value)=>{light.getCenter()[2] = value;});
+
+createSlider("light.r", 0.0, 1.0, light.getColor()[0], (value)=>{light.getColor()[0] = value;});
+createSlider("light.g", 0.0, 1.0, light.getColor()[1], (value)=>{light.getColor()[1] = value;});
+createSlider("light.b", 0.0, 1.0, light.getColor()[2], (value)=>{light.getColor()[2] = value;});
+
 
 
 renderer.listenEvent("resize", ()=>{
