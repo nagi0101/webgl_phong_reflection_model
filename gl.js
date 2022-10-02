@@ -420,15 +420,19 @@ renderer.setRenderOption({
 
 const sphere = new Sphere();
 
-vec3.set(sphere.getCenter(), 0, 0, -1);
-vec3.set(sphere.getColor(), 0.5, 0.5, 0.5);
+sphere.setCenter(vec3.fromValues(0, 0, -1));
+sphere.setColor(vec3.fromValues(0.5, 0.5, 0.5));
 sphere.setRadius(0.5);
+sphere.setAmbient(0.1);
+sphere.setDiffuse(1.0);
+sphere.setSpecular(1);
+sphere.setSpecularAlpha(5);
 
 
 const light = new Light();
 
-vec3.set(light.getCenter(), 0, 1, -1);
-vec3.set(light.getColor(), 1.0, 1.0, 1.0);
+light.setCenter(vec3.fromValues(-0.5, 1, 0.5));
+light.setColor(vec3.fromValues(1.0, 1.0, 1.0));
 
 const updateFunction = (deltatime) => {
     renderer.setUniform("u_sphere.center", [sphere.getCenter()[0], sphere.getCenter()[1], sphere.getCenter()[2]]);
@@ -496,8 +500,8 @@ createSlider("sphere.b", 0.0, 1.0, sphere.getColor()[2], (value)=>{sphere.getCol
 createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
 createSlider("sphere.ambient", 0.0, 1.0, sphere.getAmbient(), (value)=>{sphere.setAmbient(value);});
 createSlider("sphere.diffuse", 0.0, 1.0, sphere.getDiffuse(), (value)=>{sphere.setDiffuse(value);});
-createSlider("sphere.specular", 0.0, 2.0, sphere.getSpecular(), (value)=>{sphere.setSpecular(value);});
-createSlider("sphere.specularAlpha", 0.0, 400.0, sphere.getSpecularAlpha(), (value)=>{sphere.setSpecularAlpha(value);});
+createSlider("sphere.specular", 0.0, 1.0, sphere.getSpecular(), (value)=>{sphere.setSpecular(value);});
+createSlider("sphere.specularAlpha", 0.0, 100.0, sphere.getSpecularAlpha(), (value)=>{sphere.setSpecularAlpha(value);});
 
 
 createSlider("light.x", -2.0, 2.0, light.getCenter()[0], (value)=>{light.getCenter()[0] = value;});
