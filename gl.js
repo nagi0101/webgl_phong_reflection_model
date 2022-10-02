@@ -452,7 +452,7 @@ renderer.start();
 
 function createSlider(name, min, max, initialValue, callback){
     const uiContainer = document.querySelector("#ui");
-
+    
     const sliderContainer = document.createElement('div');
     sliderContainer.style.display = "flex";
     sliderContainer.id = name;
@@ -464,24 +464,24 @@ function createSlider(name, min, max, initialValue, callback){
     slider.type = 'range';
     slider.min = min;
     slider.max = max;
-    slider.value = initialValue;
     slider.step = 0.01;
+    slider.value = initialValue;
     slider.oninput = (e) => {
         const value = e.target.value
         const valuetag = e.target.nextElementSibling;
         valuetag.innerText = value.toString().substring(0, 4);
         callback(value);
     }
-
+    
     const value = document.createElement('p');
     value.innerText = slider.value;
 
-
+    
     sliderContainer.appendChild(nametag);
     sliderContainer.appendChild(slider);
     sliderContainer.appendChild(value);
     uiContainer.appendChild(sliderContainer);
-
+    
     return sliderContainer;
 }
 
