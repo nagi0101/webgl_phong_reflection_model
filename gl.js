@@ -491,7 +491,7 @@ function createSlider(name, min, max, initialValue, callback){
 
 const xSlider = createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
 createSlider("sphere.y", -1.0, 1.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
-createSlider("sphere.z", -2.0, 2.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
+createSlider("sphere.z", -4.0, 0.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
 
 createSlider("sphere.r", 0.0, 1.0, sphere.getColor()[0], (value)=>{sphere.getColor()[0] = value;});
 createSlider("sphere.g", 0.0, 1.0, sphere.getColor()[1], (value)=>{sphere.getColor()[1] = value;});
