@@ -367,8 +367,9 @@ void main() {
     vec2 screenLoc = vec2(uv.x * u_aspect, uv.y);
 
     Ray ray;
+    vec3 eyePos = vec3(0, 0, 1);
     ray.start = vec3(screenLoc, 0);
-    ray.dir = vec3(0, 0, -1);
+    ray.dir = ray.start - eyePos;
 
     float deter = getDeter(ray);
     float d = -dot(ray.dir, ray.start - u_sphere.center) - sqrt(deter);
