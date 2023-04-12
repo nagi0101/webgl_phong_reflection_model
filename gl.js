@@ -367,7 +367,7 @@ void main() {
     vec2 screenLoc = vec2(uv.x * u_aspect, uv.y);
 
     Ray ray;
-    vec3 eyePos = vec3(0, 0, 1);
+    vec3 eyePos = vec3(0, 0, 2);
     ray.start = vec3(screenLoc, 0);
     ray.dir = normalize(ray.start - eyePos);
 
