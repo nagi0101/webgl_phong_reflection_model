@@ -421,9 +421,9 @@ renderer.setRenderOption({
 
 const sphere = new Sphere();
 
-sphere.setCenter(vec3.fromValues(0, 0, -1));
+sphere.setCenter(vec3.fromValues(0, 0, -5));
 sphere.setColor(vec3.fromValues(0.5, 0.5, 0.5));
-sphere.setRadius(0.5);
+sphere.setRadius(2);
 sphere.setAmbient(0.1);
 sphere.setDiffuse(1.0);
 sphere.setSpecular(1);
@@ -490,19 +490,20 @@ function createSlider(name, min, max, initialValue, callback){
     return sliderContainer;
 }
 
+const sphereRadiusMax = 3.0;
 const xSlider = createSlider("sphere.x", -2.0, 2.0, sphere.getCenter()[0], (value)=>{sphere.getCenter()[0] = value;});
 createSlider("sphere.y", -1.0, 1.0, sphere.getCenter()[1], (value)=>{sphere.getCenter()[1] = value;});
-createSlider("sphere.z", -4.0, 0.0, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
+createSlider("sphere.z", -sphereRadiusMax * 10.0, -sphereRadiusMax, sphere.getCenter()[2], (value)=>{sphere.getCenter()[2] = value;});
 
 createSlider("sphere.r", 0.0, 1.0, sphere.getColor()[0], (value)=>{sphere.getColor()[0] = value;});
 createSlider("sphere.g", 0.0, 1.0, sphere.getColor()[1], (value)=>{sphere.getColor()[1] = value;});
 createSlider("sphere.b", 0.0, 1.0, sphere.getColor()[2], (value)=>{sphere.getColor()[2] = value;});
 
-createSlider("sphere.radius", 0.1, 1.0, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
+createSlider("sphere.radius", 0.1, sphereRadiusMax, sphere.getRadius(), (value)=>{sphere.setRadius(value);});
 createSlider("sphere.ambient", 0.0, 1.0, sphere.getAmbient(), (value)=>{sphere.setAmbient(value);});
 createSlider("sphere.diffuse", 0.0, 1.0, sphere.getDiffuse(), (value)=>{sphere.setDiffuse(value);});
 createSlider("sphere.specular", 0.0, 1.0, sphere.getSpecular(), (value)=>{sphere.setSpecular(value);});
-createSlider("sphere.specularAlpha", 0.0, 100.0, sphere.getSpecularAlpha(), (value)=>{sphere.setSpecularAlpha(value);});
+createSlider("sphere.specularAlpha", 1.0, 100.0, sphere.getSpecularAlpha(), (value)=>{sphere.setSpecularAlpha(value);});
 
 
 createSlider("light.x", -2.0, 2.0, light.getCenter()[0], (value)=>{light.getCenter()[0] = value;});
