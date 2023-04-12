@@ -369,7 +369,7 @@ void main() {
     Ray ray;
     vec3 eyePos = vec3(0, 0, 1);
     ray.start = vec3(screenLoc, 0);
-    ray.dir = ray.start - eyePos;
+    ray.dir = normalize(ray.start - eyePos);
 
     float deter = getDeter(ray);
     float d = -dot(ray.dir, ray.start - u_sphere.center) - sqrt(deter);
